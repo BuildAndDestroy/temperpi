@@ -81,6 +81,10 @@ function install_firewall() {
     sudo ufw status
 }
 
+function install_iptables() {
+    sudo apt-get install iptables-persistent -y
+}
+
 function reboot_pi() {
     echo '[*] Rebooting the pi in 5 seconds.'
     sleep 5
@@ -101,5 +105,6 @@ create_root_password
 set_root_password
 configure_sshd
 secure_sudo
+install_iptables
 install_firewall
 reboot_pi
