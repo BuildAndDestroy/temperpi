@@ -11,6 +11,9 @@ Built for Raspberry Pi, Debian Buster build.
     7)  ./build.sh
     6)  After reboot, enjoy!
 
+**Circuits for this build are found in the images/ directory.**
+
+
 *Known Issues*
     Thermometers do not work.
     Momentary switch for thermometers do not work.
