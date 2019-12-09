@@ -1,6 +1,6 @@
-**Installation**
+# Installation
 
-Built for Raspberry Pi, Debian Buster build.
+* Built for Raspberry Pi, Debian Buster build.
 
     1)  Install the hardware following the wire diagram, schematics.png
     2)  Turn on the Raspberry Pi and download the zip file to /home/pi/.
@@ -11,7 +11,7 @@ Built for Raspberry Pi, Debian Buster build.
     7)  ./build.sh
     6)  After reboot, enjoy!
 
-**Circuits for this build are found in the images/ directory.**
+* Circuits for this build are found in the images/ directory.
 
 
 *Known Issues*
