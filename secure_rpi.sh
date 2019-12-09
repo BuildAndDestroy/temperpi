@@ -37,7 +37,7 @@ function create_heateduser_password() { #  Ask for the new user password for hea
     read -sp "Password: " password_heateduser_variable
 }
 
-function creat_heateduser_user() { #  Set the new password for heateduser
+function create_heateduser_user() { #  Set the new password for heateduser
     echo -e '[*] Creating user heateduser'
     sudo /usr/sbin/useradd heateduser -m -s /bin/bash -U
     echo -e "$password_heateduser_variable\n$password_heateduser_variable\n" | passwd heateduser
@@ -108,7 +108,7 @@ create_pi_password
 set_pi_password
 set_keyboard_english
 create_heateduser_password
-creat_heateduser_user
+create_heateduser_user
 create_root_password
 set_root_password
 configure_sshd

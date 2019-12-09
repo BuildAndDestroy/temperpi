@@ -78,6 +78,10 @@ function update_firewall_thermometer() { #  Update the firewall rules to secure 
     sudo ufw disable && sudo ufw enable
 }
 
+function enable_firewall_ufw(){
+    sudo ufw enable
+}
+
 function install_temperpi() { #  Install The Python Module for TemperPi
     echo '[*] Installing temperpi into Python.'
     cd /opt/thermometer_box/ && pip3 install .
@@ -103,4 +107,5 @@ update_firewall_thermometer
 init_thermometer_hardware
 install_temperpi
 services_enabled
+enable_firewall_ufw
 reboot_pi
