@@ -75,7 +75,7 @@ function update_firewall_thermometer() { #  Update the firewall rules to secure 
     sudo iptables -P OUTPUT ACCEPT
     sed -i 's/-A\ ufw-before-input\ -m\ conntrack\ --ctstate\ RELATED,ESTABLISHED\ -j\ ACCEPT/#\ -A\ ufw-before-input\ -m\ conntrack\ --ctstate\ RELATED,ESTABLISHED\ -j\ ACCEPT/g' /etc/iptables/rules.v4
     sed -i 's/-A\ ufw-before-input\ -m\ conntrack\ --ctstate\ INVALID\ -j\ DROP/#\ -A\ ufw-before-input\ -m\ conntrack\ --ctstate\ INVALID\ -j\ DROP/g' /etc/iptables/rules.v4
-    sudo ufw disable && sudo ufw enable
+    sudo ufw disable
 }
 
 function enable_firewall_ufw(){
@@ -103,9 +103,9 @@ build_directories_scripts
 permissions_aliases
 install_modules
 update_apt
-update_firewall_thermometer
 init_thermometer_hardware
 install_temperpi
 services_enabled
+update_firewall_thermometer
 enable_firewall_ufw
 reboot_pi
