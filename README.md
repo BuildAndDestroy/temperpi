@@ -14,7 +14,7 @@
 * Circuits for this build are found in the images/ directory.
 
 
-*Known Issues*
+###### Known Issue
     Thermometers do not work.
     Momentary switch for thermometers do not work.
     This is beta, testing continues.
