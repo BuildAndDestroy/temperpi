@@ -13,4 +13,6 @@ Built for Raspberry Pi, Debian Buster build.
 
 *Known Issues*
     Momentary switch for thermometers do not work.
+    Circuit for thermometer is wrong, these need to be plugged into 3.3v.
+        Current diagram shows a feed off of the potentiomter. This is wrong.
     This is beta, testing continues.
