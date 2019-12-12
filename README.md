@@ -1,6 +1,6 @@
-**Installation**
+# Installation
 
-Built for Raspberry Pi, Debian Buster build.
+* Built for Raspberry Pi, Debian Buster build.
 
     1)  Install the hardware following the wire diagram, schematics.png
     2)  Turn on the Raspberry Pi and download the zip file to /home/pi/.
@@ -12,7 +12,8 @@ Built for Raspberry Pi, Debian Buster build.
     6)  After reboot, enjoy!
 
 *Known Issues*
-    Momentary switch for thermometers do not work.
-    Circuit for thermometer is wrong, these need to be plugged into 3.3v.
-        Current diagram shows a feed off of the potentiomter. This is wrong.
-    This is beta, testing continues.
+* Circuits for this build are found in the images/ directory.
+* Momentary switch for thermometers do not work.
+* Circuit for thermometer is wrong, these need to be plugged into 3.3v.
+* Current diagram shows a feed off of the potentiomter. This is wrong.
+* This is beta, testing continues.
