@@ -22,7 +22,7 @@ function build_directories_scripts() { #  Build Directories / Move Scripts
 }
 
 function init_thermometer_hardware() { #  init gpio pins on boot
-    echo "dtoverlay=w1–gpio" >> /boot/config.txt
+    echo "dtoverlay=w1-gpio" >> /boot/config.txt
 }
 
 function services_enabled() { #  Enable the TemperPi services

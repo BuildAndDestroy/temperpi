@@ -12,6 +12,5 @@ Built for Raspberry Pi, Debian Buster build.
     6)  After reboot, enjoy!
 
 *Known Issues*
-    Thermometers do not work.
     Momentary switch for thermometers do not work.
     This is beta, testing continues.
