@@ -11,9 +11,9 @@
     7)  ./build.sh
     6)  After reboot, enjoy!
 
+# Now GA! Install works!
+
 *Known Issues*
 * Circuits for this build are found in the images/ directory.
-* Momentary switch for thermometers do not work.
 * Circuit for thermometer is wrong, these need to be plugged into 3.3v.
 * Current diagram shows a feed off of the potentiomter. This is wrong.
-* This is beta, testing continues.
