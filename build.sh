@@ -62,24 +62,20 @@ function install_modules() { #  Install Python modules required for TemperPi
 }
 
 function update_firewall_thermometer() { #  Update the firewall rules to secure Debian.
-    sudo ufw allow in on eth0 to 224.0.0.1
-    sudo ufw allow in on eth0 to 224.0.0.251
-    sudo ufw allow out proto udp to 224.0.0.0/24
-    sudo ufw allow in proto udp to 224.0.0.0/24
+    # sudo ufw allow in on eth0 to 224.0.0.1
+    # sudo ufw allow in on eth0 to 224.0.0.251
+    # sudo ufw allow out proto udp to 224.0.0.0/24
+    # sudo ufw allow in proto udp to 224.0.0.0/24
     sudo iptables -A INPUT -p icmp -m icmp --icmp-type 8 -j REJECT
     sudo iptables -I INPUT -p tcp --dport 22 -j ACCEPT
     sudo iptables -A FORWARD -i eth0 -m conntrack --ctstate NEW -j ACCEPT
     sudo iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j LOG  --log-prefix "INPUT_REL_EST " --log-level 7
     sudo iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
     # -A ufw-before-input -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-    sudo iptables -P OUTPUT ACCEPT
     sed -i 's/-A\ ufw-before-input\ -m\ conntrack\ --ctstate\ RELATED,ESTABLISHED\ -j\ ACCEPT/#\ -A\ ufw-before-input\ -m\ conntrack\ --ctstate\ RELATED,ESTABLISHED\ -j\ ACCEPT/g' /etc/iptables/rules.v4
     sed -i 's/-A\ ufw-before-input\ -m\ conntrack\ --ctstate\ INVALID\ -j\ DROP/#\ -A\ ufw-before-input\ -m\ conntrack\ --ctstate\ INVALID\ -j\ DROP/g' /etc/iptables/rules.v4
-    sudo ufw disable
-}
-
-function enable_firewall_ufw(){
-    sudo ufw enable
+    sudo iptables -P OUTPUT ACCEPT
+    sudo ufw reload
 }
 
 function install_temperpi() { #  Install The Python Module for TemperPi
@@ -107,5 +103,4 @@ init_thermometer_hardware
 install_temperpi
 services_enabled
 update_firewall_thermometer
-enable_firewall_ufw
 reboot_pi
