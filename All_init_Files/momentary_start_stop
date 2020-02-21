@@ -1,0 +1,114 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides: start_stop_service
+# Required-Start: $remote_fs $syslog
+# Required-Stop: $remote_fs $syslog
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: This deamon controls the Thermometer reading, pushed
+# to the LCD, and handle a start_stop switch.
+#
+# Description: The App has code that will initiate a new reading command
+# when the user wants a new reading from thermometers.
+### END INIT INFO
+
+# Call this shell script start_stop_service.sh
+# This shell script will call lcd_16x2.py
+# Copy this init script into /etc/init.d using
+#       sudo cp start_stop_service.sh /etc/init.d/.
+# Make sure the script is executable
+#       sudo chmod 755 /etc/init.d/start_stop_service.sh
+#
+# At this point you should be able to start the Python script using the command
+#       sudo /etc/init.d/start_stop_service.sh start
+# Check its status with
+#       sudo /etc/init.d/start_stop_service.sh status
+# and stop it with
+#       sudo /etc/init.d/start_stop_service.sh stop
+#
+# to install start_stop_service in the boot sequence :
+# sudo update-rc.d start_stop_service.sh defaults
+#
+# to remove from the boot sequence :
+# sudo update-rc.d start_stop_service.sh remove
+
+# Change the next 3 lines to suit where the python script is and what you want to call it
+DIR=/opt/thermometer_box/temperpi
+DAEMON=$DIR/momentary_daemon.py
+DAEMON_NAME=momentary_switch_daemon
+
+# make sure that MomentaryDaemon.py is executable and the the Python shebang is present
+# chmod 755 MomentaryDaemon.py
+
+# This next line determines what user the script runs as.
+# Root generally not recommended but necessary if you are using the Raspberry Pi GPIO from Python.
+DAEMON_USER=root
+
+# The process ID of the script when it runs is stored here:
+PIDFILE=/var/run/$DAEMON_NAME.pid
+
+. /lib/lsb/init-functions
+
+do_start () {
+    # check to see if we can detect the start-stop connector on port 16
+    # it should be pulled high. >> cannot use 27, because that port is already reserved
+    # when we called the power_off overlay in /boot/config.txt <<
+    port16=""
+    echo "16" > /sys/class/gpio/export
+    echo "in" > /sys/class/gpio/gpio16/direction
+    port16=`cat /sys/class/gpio/gpio16/value`
+    echo "GPIO16 is $port16"
+    # clean up
+    echo "16" > /sys/class/gpio/unexport
+    if [ $port16 -eq 0 ]; then
+       log_daemon_msg "Start-Stop connector detected on 16, starting system $DAEMON_NAME"
+       start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER --startas $DAEMON
+       log_end_msg $?
+    else
+        log_daemon_msg "NO Start-Stop connector detected on 16, NOT Starting system $DAEMON_NAME"
+        echo ""
+    fi
+}
+# we use the --background flag of start-stop-daemon to run our script
+# in the background
+
+do_stop () {
+    log_daemon_msg "Stopping system $DAEMON_NAME"
+    start-stop-daemon --stop --pidfile $PIDFILE --retry=TERM/10/KILL/5
+    log_end_msg $?
+}
+################################################################################
+# if you need time to backup data or do something that can extend the powerdown
+# sequence, read the following carefully! :
+################################################################################
+# the --retry means that first of all a TERM -15 signal is sent
+# to the process and then 10 seconds later it will check if the process is still there
+# and if it is send a KILL -9 signal (which definitely does the job).
+# if you catch the TERM-15 signal within the app, you can control the shutdown
+# sequence and properly save all important data for a restart. You don't want
+# to be caught unprepared for the Kill -9, if needed, extend the 10 seconds.
+
+case "$1" in
+
+    start|stop)
+        do_${1}
+    ;;
+
+    restart|reload|force-reload)
+        do_stop
+        do_start
+    ;;
+
+    status)
+        status_of_proc "$DAEMON_NAME" "$DAEMON" && exit 0 || exit $?
+    ;;
+
+    *)
+        echo "Usage: /etc/init.d/$DAEMON_NAME {start|stop|restart|status}"
+        exit 1
+    ;;
+esac
+
+exit 0
+

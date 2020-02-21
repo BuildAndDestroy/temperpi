@@ -1,7 +1,5 @@
 #!/bin/bash
 
-clear
-
 function check_root() { #  Best To Run This As Root
     if [ $(id -u) != 0 ];
        then echo "Please run as root"
@@ -9,16 +7,16 @@ function check_root() { #  Best To Run This As Root
     fi
 }
 
+function check_working_directory() { #  Deploy in /opt/, or else!
+    if [ $(pwd) != '/opt' ]; then
+        echo '[*] Please git clone or unzip in the /opt/ directory. Then run again.'
+        exit
+    fi
+}
+
 function build_directories_scripts() { #  Build Directories / Move Scripts
-    # mkdir -p /opt/thermometer_box
-    mv TemperPi.zip /opt/
-    unzip /opt/TemperPi.zip -d /opt/
-    mv /opt/All_init_Files.zip /etc/init.d/
-    unzip /etc/init.d/All_init_Files.zip -d /etc/init.d/
-    mv /etc/init.d/All_init_Files/* /etc/init.d/
-    rm -rf /etc/init.d/All_init_Files/
-    rm -rf /etc/init.d/All_init_Files.zip
-    rm -rf /opt/TemperPi.zip
+    mv All_init_Files/* /etc/init.d/
+    rm -rf /opt/All_init_Files/
 }
 
 function init_thermometer_hardware() { #  init gpio pins on boot
@@ -41,6 +39,12 @@ function permissions_aliases() { #  Set File Permissions
     chmod 755 /opt/thermometer_box/temperpi/*
     chmod 755 /opt/thermometer_box/thermometer/*
     chmod 755 /opt/thermometer_box/setup.py
+    chmod 755 /etc/init.d/LCD_Welcome
+    chmod 755 /etc/init.d/momentary_shutdown
+    chmod 755 /etc/init.d/momentary_start_stop
+    chown -R root:root /etc/init.d/LCD_Welcome
+    chown -R root:root /etc/init.d/momentary_shutdown
+    chown -R root:root /etc/init.d/momentary_start_stop
     chown -R heateduser:heateduser /opt/thermometer_box
 }
 
@@ -79,13 +83,13 @@ function update_firewall_thermometer() { #  Update the firewall rules to secure 
 }
 
 function install_temperpi() { #  Install The Python Module for TemperPi
-    echo '[*] Installing temperpi into Python.'
+    echo '[*] Installing temperpi into Python3.'
     cd /opt/thermometer_box/ && pip3 install .
 }
 
 function reboot_pi() { #  Reboot the Pi
-    echo '[*] Rebooting the pi in 5 seconds.'
-    sleep 5
+    echo '[*] Rebooting the pi.'
+    sleep 3
     reboot
 }
 
@@ -95,6 +99,7 @@ function reboot_pi() { #  Reboot the Pi
 
 
 check_root
+check_working_directory
 build_directories_scripts
 permissions_aliases
 install_modules

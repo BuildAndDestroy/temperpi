@@ -1,0 +1,44 @@
+#!/bin/sh
+#
+# description: Starts and stops the LCD_Welcome daemon
+#
+### BEGIN INIT INFO
+# Provides: LCD_Welcome
+# Required-Start: $network $syslog $remote_fs
+# Required-Stop: $network
+# Default-Start: 2 3 5
+# Default-Stop: 0 1 6
+# Short-Description: LCD_Welcome daemon
+# Description: Start or stop the LCD_Welcome daemon
+### END INIT INFO
+
+LCD_Welcome_BIN=/opt/thermometer_box/temperpi/lcd_welcome.py
+test -x $LCD_Welcome_BIN || { echo "$LCD_Welcome_BIN not avaible";
+        if [ "$1" = "stop" ]; then exit 0;
+        else exit 5; fi; }
+
+RETVAL=0
+
+case "$1" in
+  start)
+        echo -n "Starting LCD_Welcome daemon "
+        sudo -u pi $LCD_Welcome_BIN  # Add your parameters after
+        ;;
+  stop)
+        echo -n "Shutting down LCD_Welcome daemon "
+        /sbin/killall $LCD_Welcome_BIN
+        ;;
+  restart)
+        $0 stop
+        $0 start
+       # rc_status
+        ;;
+  status)
+        echo -n "Checking for LCD_Welcome service "
+#        /sbin/checkproc $LCD_Welcome_BIN
+       # rc_status -v
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|status|try-restart|restart|force-reload|reload}"
+        exit 1
+esac
