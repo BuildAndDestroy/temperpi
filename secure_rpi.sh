@@ -104,9 +104,9 @@ function reboot_pi() { #  Reboot the pi
 ################################
 
 run_as_root
+set_keyboard_english
 create_pi_password
 set_pi_password
-set_keyboard_english
 create_heateduser_password
 create_heateduser_user
 create_root_password
