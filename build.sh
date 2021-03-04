@@ -8,8 +8,8 @@ function check_root() { #  Best To Run This As Root
 }
 
 function check_working_directory() { #  Deploy in /opt/, or else!
-    if [ $(pwd) != '/opt' ]; then
-        echo '[*] Please git clone or unzip in the /opt/ directory. Then run again.'
+    if [ $(pwd) != '/opt/temperpi' ]; then
+        echo '[*] Please git clone or unzip in the /opt/temperpi directory. Then run again.'
         exit
     fi
 }
