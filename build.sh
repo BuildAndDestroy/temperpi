@@ -15,8 +15,8 @@ function check_working_directory() { #  Deploy in /opt/, or else!
 }
 
 function build_directories_scripts() { #  Build Directories / Move Scripts
-    mv All_init_Files/* /etc/init.d/
-    rm -rf /opt/All_init_Files/
+    mv /opt/temperpi/All_init_Files/* /etc/init.d/
+    rm -rf /opt/temperpi/All_init_Files
 }
 
 function init_thermometer_hardware() { #  init gpio pins on boot
@@ -36,16 +36,16 @@ function services_enabled() { #  Enable the TemperPi services
 
 function permissions_aliases() { #  Set File Permissions
 
-    chmod 755 /opt/thermometer_box/temperpi/*
-    chmod 755 /opt/thermometer_box/thermometer/*
-    chmod 755 /opt/thermometer_box/setup.py
+    chmod 755 /opt/temperpi/*
+    chmod 755 /opt/temperpi/thermometer/*
+    chmod 755 /opt/temperpi/setup.py
     chmod 755 /etc/init.d/LCD_Welcome
     chmod 755 /etc/init.d/momentary_shutdown
     chmod 755 /etc/init.d/momentary_start_stop
     chown -R root:root /etc/init.d/LCD_Welcome
     chown -R root:root /etc/init.d/momentary_shutdown
     chown -R root:root /etc/init.d/momentary_start_stop
-    chown -R heateduser:heateduser /opt/thermometer_box
+    chown -R heateduser:heateduser /opt/temperpi
 }
 
 function update_apt() { #  Update apt repo for up to date packaging
@@ -62,7 +62,7 @@ function install_modules() { #  Install Python modules required for TemperPi
     sudo apt-get install python3-rpi.gpio -y
     sudo apt-get install rpi.gpio -y
     sudo apt-get install iptables-persistent -y
-    cd /opt/thermometer_box/ && pip3 install -r requirements.txt
+    cd /opt/temperpi/ && pip3 install -r requirements.txt
 }
 
 function update_firewall_thermometer() { #  Update the firewall rules to secure Debian.
@@ -84,7 +84,7 @@ function update_firewall_thermometer() { #  Update the firewall rules to secure 
 
 function install_temperpi() { #  Install The Python Module for TemperPi
     echo '[*] Installing temperpi into Python3.'
-    cd /opt/thermometer_box/ && pip3 install .
+    cd /opt/temperpi/ && pip3 install .
 }
 
 function reboot_pi() { #  Reboot the Pi

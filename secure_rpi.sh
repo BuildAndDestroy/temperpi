@@ -45,8 +45,12 @@ function create_heateduser_user() { #  Set the new password for heateduser
 }
 
 function set_keyboard_english() { #  Update keyboard to English US
-    echo -e '[*] Setting Keyboard to English (US)'
-    sed -i 's/gb/us/g' /etc/default/keyboard
+    gb_count_check=$(cat /etc/default/keyboard | grep -c 'gb')
+    if [[ $gb_count_check -eq 1 ]]; then
+        echo -e '[*] Setting Keyboard to English (US) and rebooting. Rerun script after reboot.'
+        sed -i 's/gb/us/g' /etc/default/keyboard
+        sleep 5
+    fi
 }
 
 function secure_sudo() { #  Require password when using sudo for pi and heateduser
