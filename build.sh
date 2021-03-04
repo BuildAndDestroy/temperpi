@@ -36,9 +36,10 @@ function services_enabled() { #  Enable the TemperPi services
 
 function permissions_aliases() { #  Set File Permissions
 
-    chmod 755 /opt/temperpi/*
-    chmod 755 /opt/temperpi/thermometer/*
-    chmod 755 /opt/temperpi/setup.py
+    chmod 755 /opt/temperpi/thermometer_box/setup.py
+    chmod 755 /opt/temperpi/thermometer_box/*.py
+    chmod -R 755 /opt/temperpi/thermometer_box/temperpi
+    chmod -R 755 /opt/temperpi/thermometer_box/thermometer
     chmod 755 /etc/init.d/LCD_Welcome
     chmod 755 /etc/init.d/momentary_shutdown
     chmod 755 /etc/init.d/momentary_start_stop
