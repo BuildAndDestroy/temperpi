@@ -63,7 +63,7 @@ function install_modules() { #  Install Python modules required for TemperPi
     sudo apt-get install python3-rpi.gpio -y
     sudo apt-get install rpi.gpio -y
     sudo apt-get install iptables-persistent -y
-    cd /opt/temperpi/ && pip3 install -r requirements.txt
+    cd /opt/temperpi/thermometer_box && pip3 install -r requirements.txt
 }
 
 function update_firewall_thermometer() { #  Update the firewall rules to secure Debian.
@@ -85,7 +85,7 @@ function update_firewall_thermometer() { #  Update the firewall rules to secure 
 
 function install_temperpi() { #  Install The Python Module for TemperPi
     echo '[*] Installing temperpi into Python3.'
-    cd /opt/temperpi/ && pip3 install .
+    cd /opt/temperpi/thermometer_box && pip3 install .
 }
 
 function reboot_pi() { #  Reboot the Pi
