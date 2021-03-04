@@ -50,6 +50,7 @@ function set_keyboard_english() { #  Update keyboard to English US
         echo -e '[*] Setting Keyboard to English (US) and rebooting. Rerun script after reboot.'
         sed -i 's/gb/us/g' /etc/default/keyboard
         sleep 5
+        reboot
     fi
 }
 
