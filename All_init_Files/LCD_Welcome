@@ -12,7 +12,7 @@
 # Description: Start or stop the LCD_Welcome daemon
 ### END INIT INFO
 
-LCD_Welcome_BIN=/opt/thermometer_box/temperpi/lcd_welcome.py
+LCD_Welcome_BIN=/opt/temperpi/thermometer_box/temperpi/lcd_welcome.py
 test -x $LCD_Welcome_BIN || { echo "$LCD_Welcome_BIN not avaible";
         if [ "$1" = "stop" ]; then exit 0;
         else exit 5; fi; }
