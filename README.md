@@ -3,11 +3,13 @@
 * Built for Raspberry Pi, Debian Buster build.
 
     1)  Install the hardware following the wire diagram, schematics.png
-    2)  After a clean Raspbian install, turn on the Raspberry Pi and download git repo to /opt/.
-    3)  Switch to root user and run ./secure_rpi.sh
-    4)  After reboot, "sudo su" to root with your new password and change working directory to /opt/.
-    5)  ./build.sh
-    6)  After reboot, enjoy!
+    2)  After a clean Raspbian install, turn on the Raspberry pi and login as default "pi" user.
+    3)  sudo apt install git -y
+    4)  sudo su 
+    5)  cd /opt/ && git clone https://github.com/BuildAndDestroy/temperpi.git
+    6)  cd temperpi && ./secure.sh # Your keyboard will change and reboot pi. Just cd back into temperpi as root.
+    7)  ./build.sh
+    8)  After reboot, enjoy!
 
 # Now GA! Install works!
 
