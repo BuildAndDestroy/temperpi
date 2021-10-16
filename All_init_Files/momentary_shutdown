@@ -60,7 +60,7 @@ do_start () {
     echo "GPIO20 is $port20"
     # clean up
     echo "20" > /sys/class/gpio/unexport
-    if [ $port20 -eq 1 ]; then
+    if [ $port20 -eq 0 ]; then
        log_daemon_msg "Kill connector detected on 20, starting system $DAEMON_NAME"
        start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER --startas $DAEMON
        log_end_msg $?
