@@ -17,9 +17,12 @@ Wiring diagrams are in [`docs/circuits/`](docs/circuits/) (full schematic:
 
 | Part                | Connection                                                       |
 |---------------------|------------------------------------------------------------------|
-| DS18B20 probes (×N) | Data → GPIO4, 4.7 kΩ pull-up to 3V3                              |
+| DS18B20 probes (×N) | VDD → **3V3**, GND, data → GPIO4 with a 4.7 kΩ pull-up to 3V3    |
 | 16x2 LCD            | RS 25, E 24, D4 23, D5 17, D6 21, D7 22; R/W → GND; contrast via pot |
 | Buttons             | Between 3V3 and GPIO16 / GPIO20 (internal pull-downs are used)   |
+
+> **Diagram errata:** the schematics show the thermometers fed from the
+> potentiometer. That's wrong. Power the probes straight from 3V3, as in the table.
 
 All pins are configurable in `/etc/temperpi/config.toml`.
 
@@ -39,11 +42,13 @@ sudo reboot            # first install only, so the 1-Wire overlay loads
 - installs `python3-gpiozero`, `python3-lgpio` and `polkitd` from apt
 - adds `dtoverlay=w1-gpio` to `config.txt`
 - creates an unprivileged `temperpi` system user (in the `gpio` group)
-- installs the app into a venv at `/opt/temperpi/venv`
+- installs the app into a venv at `/usr/local/lib/temperpi/venv`
 - writes `/etc/temperpi/config.toml` (never overwrites an existing one)
 - installs and starts the `temperpi` systemd service, plus a polkit rule
   that only lets that user power off the Pi
-- removes a TemperPi 1.x install (SysV init scripts, `/opt/thermometer_box`) if one exists
+- removes a TemperPi 1.x install (SysV init scripts and the system-wide `TemperPi`
+  pip package) if one exists. A 1.x clone in `/opt/temperpi` is left in place, so
+  you can `git pull` there and run the installer from it.
 
 To remove it: `sudo ./deploy/uninstall.sh`.
 

@@ -10,7 +10,7 @@ fi
 systemctl disable --now temperpi.service 2>/dev/null || true
 rm -f /etc/systemd/system/temperpi.service /etc/polkit-1/rules.d/50-temperpi.rules
 systemctl daemon-reload
-rm -rf /opt/temperpi /var/lib/temperpi
+rm -rf /usr/local/lib/temperpi /var/lib/temperpi
 rm -f /usr/local/bin/temperpi
 if id temperpi &>/dev/null; then
     userdel temperpi

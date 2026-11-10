@@ -9,7 +9,7 @@ Type=simple
 User=temperpi
 Group=temperpi
 SupplementaryGroups=gpio
-ExecStart=/opt/temperpi/venv/bin/temperpi run
+ExecStart=/usr/local/lib/temperpi/venv/bin/temperpi run
 Restart=on-failure
 RestartSec=5
 

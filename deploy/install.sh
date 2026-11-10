@@ -4,7 +4,7 @@
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PREFIX=/opt/temperpi
+PREFIX=/usr/local/lib/temperpi  # not /opt/temperpi: 1.x cloned the repo there
 SERVICE_USER=temperpi
 LEGACY_INIT_SCRIPTS=(LCD_Welcome momentary_shutdown momentary_start_stop)
 
@@ -25,7 +25,9 @@ boot_config() {
 }
 
 remove_legacy_install() {
-    # TemperPi 1.x used SysV init scripts and /opt/thermometer_box.
+    # TemperPi 1.x used SysV init scripts, a system-wide `pip3 install` of the
+    # "TemperPi" package (rpi_* commands) and, in 1.0, /opt/thermometer_box.
+    # A 1.x git clone at /opt/temperpi is left alone; you may be installing from it.
     local name
     for name in "${LEGACY_INIT_SCRIPTS[@]}"; do
         if [[ -e /etc/init.d/$name ]]; then
@@ -38,6 +40,11 @@ remove_legacy_install() {
     if [[ -d /opt/thermometer_box ]]; then
         info "Removing legacy /opt/thermometer_box"
         rm -rf /opt/thermometer_box
+    fi
+    if python3 -m pip show TemperPi &>/dev/null; then
+        info "Uninstalling legacy system-wide TemperPi Python package"
+        python3 -m pip uninstall -y TemperPi 2>/dev/null ||
+            python3 -m pip uninstall -y --break-system-packages TemperPi
     fi
 }
 
@@ -66,6 +73,8 @@ enable_one_wire() {
 }
 
 create_user() {
+    # Raspberry Pi OS ships this group (owning /dev/gpiochip*); plain Debian may not.
+    getent group gpio >/dev/null || groupadd --system gpio
     if ! id "$SERVICE_USER" &>/dev/null; then
         info "Creating system user $SERVICE_USER"
         useradd --system --no-create-home --home-dir /nonexistent \
@@ -98,9 +107,14 @@ install_service() {
     install -m 644 "$REPO_DIR/deploy/temperpi.service" /etc/systemd/system/temperpi.service
     install -d -m 755 /etc/polkit-1/rules.d
     install -m 644 "$REPO_DIR/deploy/50-temperpi.rules" /etc/polkit-1/rules.d/50-temperpi.rules
-    systemctl daemon-reload
     systemctl enable temperpi.service
-    systemctl restart temperpi.service
+    if [[ -d /run/systemd/system ]]; then
+        systemctl daemon-reload
+        systemctl restart temperpi.service
+    else
+        # Chroot/container (image builds, CI): enabled, starts on first boot.
+        info "systemd not running; temperpi will start on next boot"
+    fi
 }
 
 NEEDS_REBOOT=0
