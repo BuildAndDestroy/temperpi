@@ -53,7 +53,7 @@ class Config:
     sensors: tuple[Sensor, ...] = ()
     w1_devices_dir: Path = Path("/sys/bus/w1/devices")
     # Shown on the top line of the idle screen; the bottom line is the IPv4 address.
-    idle_title: str = "Reaper-UT.com"
+    idle_title: str = "HarvestRangeLabs"
     preferred_interfaces: tuple[str, ...] = ("eth0", "end0", "wlan0")
     # How often the idle screen refreshes the IP address (it may change, or
     # not exist yet right after boot).

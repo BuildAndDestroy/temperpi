@@ -47,7 +47,7 @@ def running(mock_pins, monkeypatch, tmp_path):
     )
     thread = threading.Thread(target=daemon.run, args=(cfg,), daemon=True)
     thread.start()
-    assert _wait_for(lambda: screens.idle("Reaper-UT.com", "10.0.0.2") in shown)
+    assert _wait_for(lambda: screens.idle("HarvestRangeLabs", "10.0.0.2") in shown)
     yield types.SimpleNamespace(pins=mock_pins, shown=shown, powered_off=powered_off, thread=thread)
 
     if thread.is_alive():  # stop it the way systemd would
@@ -75,7 +75,7 @@ def _tap(pin, hold=0.1):
 def test_read_button_shows_temperatures_then_idle(running):
     _tap(running.pins.pin(16))
     assert _wait_for(lambda: screens.temperature_frames([])[-1][0] in running.shown)
-    assert _wait_for(lambda: running.shown[-1] == screens.idle("Reaper-UT.com", "10.0.0.2"))
+    assert _wait_for(lambda: running.shown[-1] == screens.idle("HarvestRangeLabs", "10.0.0.2"))
     assert not running.powered_off
 
 

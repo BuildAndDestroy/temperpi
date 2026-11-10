@@ -6,7 +6,11 @@ from temperpi.thermometer import Reading, SensorError
 def test_all_frames_fit_display():
     frames = [f for f, _ in screens.welcome_frames()]
     frames += [f for f, _ in screens.temperature_frames([Reading("S-1", -12.34)])]
-    frames += [screens.SHUTDOWN, screens.STOPPED, screens.idle("Reaper-UT.com", "192.168.100.200")]
+    frames += [
+        screens.SHUTDOWN,
+        screens.STOPPED,
+        screens.idle("HarvestRangeLabs", "192.168.100.200"),
+    ]
     for top, bottom in frames:
         assert len(top) <= WIDTH, top
         assert len(bottom) <= WIDTH, bottom
