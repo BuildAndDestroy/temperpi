@@ -1,0 +1,42 @@
+# TemperPi configuration. Installed to /etc/temperpi/config.toml.
+# Every setting is optional; the values shown are the defaults unless noted.
+# After editing: sudo systemctl restart temperpi
+
+# Top line of the idle screen. The bottom line shows the Pi's IPv4 address.
+idle_title = "Reaper-UT.com"
+
+# Interfaces checked first for the IP shown on the LCD (any other interface
+# with an address is used as a fallback).
+preferred_interfaces = ["eth0", "end0", "wlan0"]
+idle_refresh_seconds = 30.0
+show_welcome = true
+
+# Where the kernel exposes 1-Wire devices.
+# w1_devices_dir = "/sys/bus/w1/devices"
+
+# BCM GPIO numbers for the HD44780 LCD (4-bit mode).
+[lcd]
+rs = 25
+e = 24
+d4 = 23
+d5 = 17
+d6 = 21
+d7 = 22
+
+# Momentary switches, wired between 3V3 and the GPIO (internal pull-down).
+[buttons]
+read_temperature = 16
+shutdown = 20
+shutdown_hold_seconds = 2.0   # hold to power off (prevents accidental bumps)
+bounce_seconds = 0.05
+
+# DS18B20 sensors in display order. Remove every [[sensors]] block to
+# auto-discover all sensors (labelled S-1, S-2, ... by ID). Find IDs with:
+#   ls /sys/bus/w1/devices/    or    temperpi temps
+[[sensors]]
+id = "28-80000007b187"
+label = "S-1"
+
+[[sensors]]
+id = "28-80000003f3f5"
+label = "S-2"
