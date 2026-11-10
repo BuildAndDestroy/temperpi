@@ -25,7 +25,7 @@ def d(tmp_path, monkeypatch):
 def test_starts_on_idle_and_stops(d):
     d.events.put(Event.STOP)
     d.run()
-    assert d.lcd.shown[0] == screens.idle("Reaper-UT.com", "10.1.2.3")
+    assert d.lcd.shown[0] == screens.idle("HarvestRangeLabs", "10.1.2.3")
     assert d.lcd.shown[-1] == screens.STOPPED
 
 
@@ -36,7 +36,7 @@ def test_read_then_back_to_idle_and_drops_repeat_presses(d, monkeypatch):
         d.events.put(ev)
     d.run()
     assert calls == [1]
-    assert d.lcd.shown[-2] == screens.idle("Reaper-UT.com", "10.1.2.3")
+    assert d.lcd.shown[-2] == screens.idle("HarvestRangeLabs", "10.1.2.3")
 
 
 def test_shutdown_shows_message_and_powers_off(d, monkeypatch):

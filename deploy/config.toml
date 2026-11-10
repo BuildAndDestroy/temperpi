@@ -3,7 +3,7 @@
 # After editing: sudo systemctl restart temperpi
 
 # Top line of the idle screen. The bottom line shows the Pi's IPv4 address.
-idle_title = "Reaper-UT.com"
+idle_title = "HarvestRangeLabs"
 
 # Interfaces checked first for the IP shown on the LCD (any other interface
 # with an address is used as a fallback).
