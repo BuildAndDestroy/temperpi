@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "temperpi"
+dynamic = ["version"]
+description = "Raspberry Pi thermometer box: DS18B20 sensors, 16x2 LCD and push buttons."
+readme = "README.md"
+license = { text = "GPL-3.0-or-later" }
+authors = [{ name = "Mitch O'Donnell" }]
+requires-python = ">=3.11"
+dependencies = ["gpiozero>=2.0"]
+classifiers = [
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Topic :: System :: Hardware",
+]
+
+[project.urls]
+Homepage = "https://github.com/BuildAndDestroy/temperpi"
+
+[project.scripts]
+temperpi = "temperpi.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[tool.setuptools.dynamic]
+version = { attr = "temperpi.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]

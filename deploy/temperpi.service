@@ -1,0 +1,35 @@
+[Unit]
+Description=TemperPi LCD thermometer
+Documentation=https://github.com/BuildAndDestroy/temperpi
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=temperpi
+Group=temperpi
+SupplementaryGroups=gpio
+ExecStart=/opt/temperpi/venv/bin/temperpi run
+Restart=on-failure
+RestartSec=5
+
+# lgpio writes notification FIFOs into its working directory.
+StateDirectory=temperpi
+WorkingDirectory=/var/lib/temperpi
+Environment=LG_WD=/var/lib/temperpi
+
+# Hardening. GPIO needs /dev/gpiochip*, so no PrivateDevices.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+
+[Install]
+WantedBy=multi-user.target

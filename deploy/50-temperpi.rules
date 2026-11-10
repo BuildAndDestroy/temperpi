@@ -1,0 +1,9 @@
+// Let the temperpi service user power off the Pi (shutdown button).
+// Installed to /etc/polkit-1/rules.d/.
+polkit.addRule(function (action, subject) {
+    if (subject.user == "temperpi" &&
+        (action.id == "org.freedesktop.login1.power-off" ||
+         action.id == "org.freedesktop.login1.power-off-multiple-sessions")) {
+        return polkit.Result.YES;
+    }
+});
