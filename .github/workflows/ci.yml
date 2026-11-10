@@ -4,25 +4,109 @@ on:
   push:
     branches: [master]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - run: pip install ruff
+      - run: ruff check --output-format=github .
+      - run: ruff format --check .
+      - name: shellcheck
+        run: shellcheck deploy/*.sh .github/scripts/*.sh
+
   test:
-    runs-on: ubuntu-latest
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
+        # 3.11 = Pi OS bookworm, 3.13 = Pi OS trixie
         python-version: ["3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install -e ".[dev]"
-      - run: ruff check .
-      - run: ruff format --check .
-      - run: pytest
+      - run: pytest -v
 
-  shellcheck:
-    runs-on: ubuntu-latest
+  build:
+    name: Build sdist + wheel
+    needs: [lint, test]
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - run: shellcheck deploy/*.sh
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - run: pip install build twine
+      - run: python -m build
+      - run: twine check --strict dist/*
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+
+  raspberry-pi-os:
+    # Installs the built wheel with deploy/install.sh into Raspberry Pi OS
+    # userland (Debian + the Raspberry Pi apt archive) on real ARM: native arm64
+    # runners for 64-bit Pi OS, QEMU for 32-bit armhf. Runs the test suite
+    # there against the Pi archive's gpiozero/lgpio. See .github/scripts/pi-os-smoke.sh.
+    name: Pi OS ${{ matrix.suite }} ${{ matrix.arch }}
+    needs: build
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [bookworm, trixie]
+        arch: [arm64, armhf]
+        include:
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+          - arch: armhf
+            runner: ubuntu-24.04
+            platform: linux/arm/v7
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: dist/
+      - name: Set up QEMU
+        if: matrix.arch == 'armhf'
+        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+        with:
+          platforms: arm
+      - name: Install and verify on Raspberry Pi OS ${{ matrix.suite }} (${{ matrix.arch }})
+        env:
+          PLATFORM: ${{ matrix.platform }}
+          SUITE: ${{ matrix.suite }}
+        run: |
+          wheel=$(ls dist/*.whl)
+          docker run --rm --platform "$PLATFORM" -v "$PWD:/src:ro" "debian:$SUITE" \
+            bash /src/.github/scripts/pi-os-smoke.sh /src "/src/$wheel"

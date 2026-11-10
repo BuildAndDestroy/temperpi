@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # Install or upgrade TemperPi on Raspberry Pi OS (Bookworm or newer).
 # Safe to re-run. Usage: sudo ./deploy/install.sh
+#
+# Installs from this checkout by default. To install a prebuilt wheel instead
+# (e.g. one downloaded from a GitHub release):
+#   sudo TEMPERPI_PACKAGE=/path/to/temperpi-X.Y.Z-py3-none-any.whl ./deploy/install.sh
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -89,7 +93,15 @@ install_app() {
     # System site packages give the venv apt's gpiozero + lgpio.
     python3 -m venv --system-site-packages "$PREFIX/venv"
     "$PREFIX/venv/bin/pip" install --quiet --upgrade pip
-    "$PREFIX/venv/bin/pip" install --quiet --upgrade "$REPO_DIR"
+    local package=${TEMPERPI_PACKAGE:-}
+    if [[ -z $package ]]; then
+        # Build from a copy so root-owned build/ and *.egg-info don't land in
+        # the user's checkout (and read-only checkouts work).
+        package=$(mktemp -d)
+        trap 'rm -rf "$package"' RETURN
+        cp -r "$REPO_DIR"/{pyproject.toml,README.md,LICENSE,src} "$package/"
+    fi
+    "$PREFIX/venv/bin/pip" install --quiet --upgrade "$package"
     ln -sf "$PREFIX/venv/bin/temperpi" /usr/local/bin/temperpi
 }
 

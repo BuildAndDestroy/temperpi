@@ -9,7 +9,9 @@ from __future__ import annotations
 import logging
 import queue
 import signal
-import subprocess
+
+# Only used for the fixed poweroff command in power_off().
+import subprocess  # nosec B404
 from enum import Enum, auto
 from types import FrameType
 
@@ -28,7 +30,8 @@ class Event(Enum):
 
 def power_off() -> None:
     # Authorised for the service user by deploy/50-temperpi.rules (polkit).
-    subprocess.run(["systemctl", "poweroff"], check=True)
+    # Fixed argv with an absolute path, no shell, no external input.
+    subprocess.run(["/usr/bin/systemctl", "poweroff"], check=True)  # nosec B603
 
 
 class Daemon:

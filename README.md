@@ -1,5 +1,8 @@
 # TemperPi
 
+[![CI](https://github.com/BuildAndDestroy/temperpi/actions/workflows/ci.yml/badge.svg)](https://github.com/BuildAndDestroy/temperpi/actions/workflows/ci.yml)
+[![Security](https://github.com/BuildAndDestroy/temperpi/actions/workflows/security.yml/badge.svg)](https://github.com/BuildAndDestroy/temperpi/actions/workflows/security.yml)
+
 A Raspberry Pi thermometer box. DS18B20 probes are read over 1-Wire and shown on
 a 16x2 HD44780 LCD. Two momentary buttons control it:
 
@@ -103,6 +106,24 @@ ruff check . && ruff format .
 
 The hardware is behind small interfaces, so the tests run on any Linux machine
 without a Pi.
+
+### CI
+
+| Workflow | What it does |
+|----------|--------------|
+| [`ci.yml`](.github/workflows/ci.yml) | ruff, shellcheck, and pytest on Python 3.11–3.13. Builds and checks the sdist and wheel. Then it installs that wheel with `deploy/install.sh` into **Raspberry Pi OS userland** (Debian + the Raspberry Pi apt archive) for Bookworm and Trixie on arm64 (native ARM runners) and armhf (QEMU), and runs the test suite there against the Pi's own gpiozero/lgpio ([`pi-os-smoke.sh`](.github/scripts/pi-os-smoke.sh)) |
+| [`security.yml`](.github/workflows/security.yml) | CodeQL (Python and Actions), Bandit, pip-audit, dependency review on PRs, and zizmor for workflow security. Results go to the repo's Security tab. Also runs weekly |
+| [`release.yml`](.github/workflows/release.yml) | When you push a `vX.Y.Z` tag, it builds, attaches a provenance attestation, and publishes a GitHub release with the wheel |
+
+Dependabot keeps the pinned actions and Python dependencies up to date.
+
+To run the Pi OS check locally (x86 is fine, since the Pi archive also publishes amd64):
+
+```bash
+python -m build
+docker run --rm -v "$PWD:/src:ro" debian:trixie \
+    bash /src/.github/scripts/pi-os-smoke.sh /src /src/dist/temperpi-2.0.0-py3-none-any.whl
+```
 
 ## License
 

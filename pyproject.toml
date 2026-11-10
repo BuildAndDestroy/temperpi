@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=69"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,7 +7,8 @@ name = "temperpi"
 dynamic = ["version"]
 description = "Raspberry Pi thermometer box: DS18B20 sensors, 16x2 LCD and push buttons."
 readme = "README.md"
-license = { text = "GPL-3.0-or-later" }
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
 authors = [{ name = "Mitch O'Donnell" }]
 requires-python = ">=3.11"
 dependencies = ["gpiozero>=2.0"]
